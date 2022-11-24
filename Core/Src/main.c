@@ -1,4 +1,5 @@
 /* USER CODE BEGIN Header */
+/*VILLETTE Lou-Anne & CALDEIRA Quentin*/
 /**
   ******************************************************************************
   * @file           : main.c
