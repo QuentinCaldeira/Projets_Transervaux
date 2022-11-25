@@ -22,6 +22,7 @@
 #include "i2c.h"
 #include "usart.h"
 #include "gpio.h"
+#include <stdio.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -36,6 +37,18 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define ACC_ADR 		(0x32)<<1 //Adresse i2c de l'acceloremetre
+#define MAG_ADR 		(0x3C)<<1 //Adresse i2c du magnetometre
+#define WHO_AM_I_A 		0x0F
+#define WHO_AM_I_M		0x4F
+
+
+#define CTRL_REG1_A 	0x20
+#define CTRL_REG5_A 	0x24
+#define OUT_X_L_A		0x28
+
+#define CFG_REG_A_M 	0x60
+#define	OUTX_L_REG_M	0x68
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -46,7 +59,10 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+ char acc_data_w[12];
+ char acc_data_r[12];
+ char mag_data_w[12];
+ char mag_data_r[12];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -87,6 +103,8 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
+  HAL_StatusTypeDef ret;
+  uint8_t buf[12];
 
   /* USER CODE END SysInit */
 
@@ -96,20 +114,28 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-	printf("Test\n\r");
+  while (1){
+	  acc_data_w[0]=ACC_ADR;
+	  HAL_I2C_Master_Transmit(&hi2c1, ACC_ADR, (uint8_t*)acc_data_w, 1, 1000);
+	  HAL_I2C_Master_Receive(&hi2c1, ACC_ADR, (uint8_t*)acc_data_r, 1, 1000);
+	  if(acc_data_r[0]==0b00110011){
+			  printf("Oui");
+	  }
+	  printf("\r\n");
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
-}
 
+}
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -172,6 +198,7 @@ void Error_Handler(void)
   __disable_irq();
   while (1)
   {
+	  printf("error i2c");
   }
   /* USER CODE END Error_Handler_Debug */
 }
