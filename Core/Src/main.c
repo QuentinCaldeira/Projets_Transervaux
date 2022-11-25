@@ -19,7 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include <stdio.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -98,9 +98,11 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  float a=2.1;
   while (1)
   {
 	printf("Test\n\r");
+	printf("%f \n\r", a);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
