@@ -22,7 +22,6 @@
 #include "i2c.h"
 #include "usart.h"
 #include "gpio.h"
-#include <stdio.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -37,8 +36,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define ACC_ADR 		(0x32)<<1 //Adresse i2c de l'acceloremetre
-#define MAG_ADR 		(0x3C)<<1 //Adresse i2c du magnetometre
+#define ACC_ADR 		0x32 //Adresse i2c de l'acceloremetre
+#define MAG_ADR 		0x3C //Adresse i2c du magnetometre
 #define WHO_AM_I_A 		0x0F
 #define WHO_AM_I_M		0x4F
 
@@ -67,6 +66,7 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+int who_am_i_sensors();
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -77,6 +77,45 @@ int __io_putchar(int ch) {
 	uint8_t c = ch & 0x00FF;
 	HAL_UART_Transmit(&huart2, &c, 1, 10);
 	return ch;
+}
+
+int who_am_i_sensors(){
+	uint8_t buf[1];
+	HAL_StatusTypeDef ret;
+	buf[0] = WHO_AM_I_A;//ADR WHOIAM
+	printf("test\n\r");
+	ret = HAL_I2C_Master_Transmit(&hi2c1, ACC_ADR, buf, 1, HAL_MAX_DELAY);
+	if ( ret != HAL_OK ) {
+		printf("Error Tx\r\n");
+	}
+	else {
+	    ret = HAL_I2C_Master_Receive(&hi2c1, ACC_ADR, buf, 1, HAL_MAX_DELAY);
+	    if ( ret != HAL_OK ) {
+	      printf("Error Rx\r\n");
+	    }
+	    else {
+	    	if ( buf[0]==0x33 ) {
+	        printf("Detection de accelerometre \n\r");
+	    	}
+	    }
+  }
+  buf[0] = WHO_AM_I_M;//ADR WHOIAM
+  printf("test\n\r");
+  ret = HAL_I2C_Master_Transmit(&hi2c1, MAG_ADR, buf, 1, HAL_MAX_DELAY);
+  if ( ret != HAL_OK ) {
+	  printf("Error Tx\r\n");
+  }
+  else {
+  	ret = HAL_I2C_Master_Receive(&hi2c1, MAG_ADR, buf, 1, HAL_MAX_DELAY);
+  	if ( ret != HAL_OK ) {
+  	  printf("Error Rx\r\n");
+  	}
+    else {
+    	if ( buf[0]==0x40 ) {
+    		printf("Detection de magneto \n\r");
+    	}
+    }
+  }
 }
 /* USER CODE END 0 */
 
@@ -103,8 +142,8 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  HAL_StatusTypeDef ret;
-  uint8_t buf[12];
+
+
 
   /* USER CODE END SysInit */
 
@@ -115,64 +154,19 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1){
-	  buf[0] = 0x0F;//ADR WHOIAM
-	  printf("test\n\r");
-	  ret = HAL_I2C_Master_Transmit(&hi2c1, (0x32), buf, 1, HAL_MAX_DELAY);
-	  if ( ret != HAL_OK ) {
-	    printf("Error Tx\r\n");
-	    } 
-    else {
-	    ret = HAL_I2C_Master_Receive(&hi2c1, (0x32), buf, 1, HAL_MAX_DELAY);
-	    if ( ret != HAL_OK ) {
-	      printf("Error Rx\r\n");
-	        } 
-      else {
-	      val = buf[0];
-	      if ( val==0x33 ) {
-	        printf("Detection de accelerometre \n\r");
-	      }
-      }
-    }
-    buf[1] = 0x4F;//ADR WHOIAM
-    printf("test\n\r");
-    ret = HAL_I2C_Master_Transmit(&hi2c1, (0x32), buf[1], 1, HAL_MAX_DELAY);
-    if ( ret != HAL_OK ) {
-    	printf("Error Tx\r\n");
-    } 
-    else {
-    	ret = HAL_I2C_Master_Receive(&hi2c1, (0x32), buf[1], 1, HAL_MAX_DELAY);
-    	if ( ret != HAL_OK ) {
-    	  printf("Error Rx\r\n");
-    	} 
-      else {
-    	  val = buf[1];
-    	  if ( val==0x40 ) {
-    	    printf("Detection de magneto \n\r");
-    	  }
-      }
-    }
+	  who_am_i_sensors();
   }
 }
-    /* USER CODE BEGIN 3 */
-  
-  /* USER CODE END 3 */
-
-
-
-
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   
   /* USER CODE END 3 */
-
 
 /**
   * @brief System Clock Configuration
