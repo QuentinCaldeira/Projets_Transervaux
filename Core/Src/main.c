@@ -56,7 +56,11 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+int __io_putchar(int ch) {
+	uint8_t c = ch & 0x00FF;
+	HAL_UART_Transmit(&huart2, &c, 1, 10);
+	return ch;
+}
 /* USER CODE END 0 */
 
 /**
@@ -96,6 +100,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	printf("Test\n\r");
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
