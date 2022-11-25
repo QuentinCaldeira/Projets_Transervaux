@@ -121,21 +121,59 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1){
-	  acc_data_w[0]=ACC_ADR;
-	  HAL_I2C_Master_Transmit(&hi2c1, ACC_ADR, (uint8_t*)acc_data_w, 1, 1000);
-	  HAL_I2C_Master_Receive(&hi2c1, ACC_ADR, (uint8_t*)acc_data_r, 1, 1000);
-	  if(acc_data_r[0]==0b00110011){
-			  printf("Oui");
-	  }
-	  printf("\r\n");
+	  buf[0] = 0x0F;//ADR WHOIAM
+	  printf("test\n\r");
+	  ret = HAL_I2C_Master_Transmit(&hi2c1, (0x32), buf, 1, HAL_MAX_DELAY);
+	  if ( ret != HAL_OK ) {
+	    printf("Error Tx\r\n");
+	    } 
+    else {
+	    ret = HAL_I2C_Master_Receive(&hi2c1, (0x32), buf, 1, HAL_MAX_DELAY);
+	    if ( ret != HAL_OK ) {
+	      printf("Error Rx\r\n");
+	        } 
+      else {
+	      val = buf[0];
+	      if ( val==0x33 ) {
+	        printf("Detection de accelerometre \n\r");
+	      }
+      }
+    }
+    buf[1] = 0x4F;//ADR WHOIAM
+    printf("test\n\r");
+    ret = HAL_I2C_Master_Transmit(&hi2c1, (0x32), buf[1], 1, HAL_MAX_DELAY);
+    if ( ret != HAL_OK ) {
+    	printf("Error Tx\r\n");
+    } 
+    else {
+    	ret = HAL_I2C_Master_Receive(&hi2c1, (0x32), buf[1], 1, HAL_MAX_DELAY);
+    	if ( ret != HAL_OK ) {
+    	  printf("Error Rx\r\n");
+    	} 
+      else {
+    	  val = buf[1];
+    	  if ( val==0x40 ) {
+    	    printf("Detection de magneto \n\r");
+    	  }
+      }
+    }
+  }
+}
+    /* USER CODE BEGIN 3 */
+  
+  /* USER CODE END 3 */
+
+
+
+
 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  }
+  
   /* USER CODE END 3 */
 
-}
+
 /**
   * @brief System Clock Configuration
   * @retval None
