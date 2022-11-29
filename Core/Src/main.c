@@ -65,7 +65,7 @@ int __io_putchar(int ch) {
 	return ch;
 }
 /*----------------------------------------------------------------------------*/
-
+a
 /*---Fonction permettant d'attester la présence du magneto et de l'accelero---*/
 int who_am_i_sensors(){
 	uint8_t buf[1];                                                                                     //Buffer de 1 octet car on ne lit que une case mémoire
