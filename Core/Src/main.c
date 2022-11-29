@@ -1,22 +1,7 @@
 /* USER CODE BEGIN Header */
 /*VILLETTE Lou-Anne & CALDEIRA Quentin*/
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2022 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "i2c.h"
@@ -73,50 +58,52 @@ int who_am_i_sensors();
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+/*------------Fonction permettant de relier le printf et l'uart---------------*/
 int __io_putchar(int ch) {
 	uint8_t c = ch & 0x00FF;
 	HAL_UART_Transmit(&huart2, &c, 1, 10);
 	return ch;
 }
+/*----------------------------------------------------------------------------*/
 
+/*---Fonction permettant d'attester la présence du magneto et de l'accelero---*/
 int who_am_i_sensors(){
-	uint8_t buf[1];
-	HAL_StatusTypeDef ret;
-	buf[0] = WHO_AM_I_A;//ADR WHOIAM
-	printf("test\n\r");
-	ret = HAL_I2C_Master_Transmit(&hi2c1, ACC_ADR, buf, 1, HAL_MAX_DELAY);
-	if ( ret != HAL_OK ) {
+	uint8_t buf[1];                                                                                     //Buffer de 1 octet car on ne lit que une case mémoire
+	HAL_StatusTypeDef ret;                                                                              //Variable HAL permettant de voir l'état de la transmission I2C
+	buf[0] = WHO_AM_I_A;                                                                                //On affecte l'adresse de la case mémoire stockant WHOAMI pour l'accelero
+	ret = HAL_I2C_Master_Transmit(&hi2c1, ACC_ADR, buf, 1, HAL_MAX_DELAY);                              //On effectue la transmission sur l'accelero
+	if ( ret != HAL_OK ) {                                                                              //Si la transmission s'est mal passé, on affiche une erreur
 		printf("Error Tx\r\n");
 	}
 	else {
-	    ret = HAL_I2C_Master_Receive(&hi2c1, ACC_ADR, buf, 1, HAL_MAX_DELAY);
-	    if ( ret != HAL_OK ) {
+	    ret = HAL_I2C_Master_Receive(&hi2c1, ACC_ADR, buf, 1, HAL_MAX_DELAY);                           //Sinon, on recupere la valeur dans la case memoire
+	    if ( ret != HAL_OK ) {                                                                          //Si la réception s'est mal passée, on affiche une erreur
 	      printf("Error Rx\r\n");
 	    }
 	    else {
-	    	if ( buf[0]==0x33 ) {
+	    	if ( buf[0]==0x33 ) {                                                                         //On teste si la valeur présente dans la case memoire est identique à celle indiquée dans la doc
 	        printf("Detection de accelerometre \n\r");
 	    	}
 	    }
   }
-  buf[0] = WHO_AM_I_M;//ADR WHOIAM
-  printf("test\n\r");
-  ret = HAL_I2C_Master_Transmit(&hi2c1, MAG_ADR, buf, 1, HAL_MAX_DELAY);
-  if ( ret != HAL_OK ) {
+  buf[0] = WHO_AM_I_M;                                                                                //On affecte l'adresse de la case mémoire du WHOAMI pour le magneto
+  ret = HAL_I2C_Master_Transmit(&hi2c1, MAG_ADR, buf, 1, HAL_MAX_DELAY);                              //On effectue la transmission sur le magneto
+  if ( ret != HAL_OK ) {                                                                              //Si la transmission s'est mal passé, on affiche une erreur
 	  printf("Error Tx\r\n");
   }
   else {
-  	ret = HAL_I2C_Master_Receive(&hi2c1, MAG_ADR, buf, 1, HAL_MAX_DELAY);
-  	if ( ret != HAL_OK ) {
+  	ret = HAL_I2C_Master_Receive(&hi2c1, MAG_ADR, buf, 1, HAL_MAX_DELAY);                             //Sinon, on recupere la valeur dans la case memoire
+  	if ( ret != HAL_OK ) {                                                                            //Si la réception s'est mal passée, on affiche une erreur
   	  printf("Error Rx\r\n");
   	}
     else {
-    	if ( buf[0]==0x40 ) {
+    	if ( buf[0]==0x40 ) {                                                                           //On teste si la valeur présente dans la case memoire est identique à celle indiquée dans la doc
     		printf("Detection de magneto \n\r");
     	}
     }
   }
 }
+/*---------------------------------------------------------------------------------*/
 /* USER CODE END 0 */
 
 /**
