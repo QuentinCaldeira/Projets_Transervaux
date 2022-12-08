@@ -104,9 +104,7 @@ int who_am_i_sensors(){
   }
 }
 
-int reset_acc(){
-  
-}
+
 /*---------------------------------------------------------------------------------*/
 /* USER CODE END 0 */
 
@@ -156,7 +154,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  
+
   /* USER CODE END 3 */
 
 /**
